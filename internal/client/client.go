@@ -23,3 +23,8 @@ func New(ctx context.Context) (*Client, error) {
 		Redis:    rds,
 	}, nil
 }
+
+func (c *Client) Close() {
+	c.Postgres.Close()
+	c.Redis.Close()
+}

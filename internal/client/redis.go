@@ -37,3 +37,7 @@ func newRedisClient(ctx context.Context) (*RedisClient, error) {
 
 	return &RedisClient{rds: rds}, nil
 }
+
+func (c *RedisClient) Close() {
+	c.rds.Close()
+}

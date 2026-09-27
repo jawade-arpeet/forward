@@ -15,6 +15,8 @@ func main() {
 		panic(err)
 	}
 
+	defer srv.Shutdown()
+
 	if err := srv.Start(); err != nil {
 		panic(err)
 	}

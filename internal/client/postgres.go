@@ -35,3 +35,7 @@ func newPostgresClient(ctx context.Context) (*PostgresClient, error) {
 
 	return &PostgresClient{pool: pool}, nil
 }
+
+func (c *PostgresClient) Close() {
+	c.pool.Close()
+}

@@ -15,6 +15,7 @@ import (
 
 type Server struct {
 	config *config.ServerConfig
+	client *client.Client
 	router *echo.Echo
 }
 
@@ -35,6 +36,7 @@ func New() (*Server, error) {
 
 	return &Server{
 		config: cfg,
+		client: clt,
 		router: rtr,
 	}, nil
 }
@@ -42,4 +44,8 @@ func New() (*Server, error) {
 func (s *Server) Start() error {
 	addr := fmt.Sprintf(":%d", s.config.Port)
 	return s.router.Start(addr)
+}
+
+func (s *Server) Shutdown() {
+	s.client.Close()
 }
