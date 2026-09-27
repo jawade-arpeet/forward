@@ -6,6 +6,7 @@ import (
 	"forward/internal/client"
 	"forward/internal/config"
 	"forward/internal/handler"
+	"forward/internal/middleware"
 	"forward/internal/repository"
 	"forward/internal/router"
 	"forward/internal/service"
@@ -31,8 +32,9 @@ func New() (*Server, error) {
 
 	repo := repository.New(clt)
 	svc := service.New(repo)
+	mw := middleware.New()
 	hdlr := handler.New(svc)
-	rtr := router.New(hdlr)
+	rtr := router.New(mw, hdlr)
 
 	return &Server{
 		config: cfg,
