@@ -13,4 +13,5 @@ func MountV1Router(
 	v1Grp := routerGrp.Group("/v1")
 
 	mountHealthRouter(v1Grp, hdlr.Health)
+	mountAuthRouter(v1Grp, hdlr.Auth)
 }

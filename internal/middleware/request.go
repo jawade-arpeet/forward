@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"errors"
+	"forward/internal/errs"
 	"uuid"
 
 	"github.com/labstack/echo/v5"
@@ -24,5 +26,30 @@ func (m *RequestMiddleware) SetRequestID(next echo.HandlerFunc) echo.HandlerFunc
 		ctx.Set("request_id", reqID)
 
 		return next(ctx)
+	}
+}
+
+func (m *RequestMiddleware) HandleError(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx *echo.Context) error {
+		err := next(ctx)
+
+		if err == nil {
+			return nil
+		}
+
+		var httpErr *errs.HTTPError
+		if !errors.As(err, &httpErr) {
+			return errs.Internal(err)
+		}
+
+		return ctx.JSON(
+			httpErr.Status,
+			map[string]any{
+				"error": map[string]any{
+					"code":    httpErr.Code,
+					"message": httpErr.Message,
+				},
+			},
+		)
 	}
 }
