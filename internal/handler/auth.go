@@ -5,6 +5,7 @@ import (
 	"forward/internal/service"
 	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v5"
 )
 
@@ -17,13 +18,21 @@ func newAuthHandler(authSvc *service.AuthService) *AuthHandler {
 }
 
 type SignUpRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=32"`
 }
 
 func (h *AuthHandler) SignUp(ctx *echo.Context) error {
 	var req SignUpRequest
 	if err := ctx.Bind(&req); err != nil {
+		return errs.BadRequest(
+			errs.CodeInvalidInput,
+			"invalid payload",
+			err,
+		)
+	}
+
+	if err := validator.New().Struct(req); err != nil {
 		return errs.BadRequest(
 			errs.CodeInvalidInput,
 			"invalid payload",
@@ -46,13 +55,21 @@ func (h *AuthHandler) SignUp(ctx *echo.Context) error {
 }
 
 type SignInPayload struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=8,max=32"`
 }
 
 func (h *AuthHandler) SignIn(ctx *echo.Context) error {
 	var req SignUpRequest
 	if err := ctx.Bind(&req); err != nil {
+		return errs.BadRequest(
+			errs.CodeInvalidInput,
+			"invalid payload",
+			err,
+		)
+	}
+
+	if err := validator.New().Struct(req); err != nil {
 		return errs.BadRequest(
 			errs.CodeInvalidInput,
 			"invalid payload",
